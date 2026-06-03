@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQA - Cryptoize the World</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 1. 山内財団ライクなグリッド背景マトリクス */
+        .bg-matrix {
+            background-color: #020617;
+            background-image: 
+                linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        /* 2. フォント設定の定義 */
+        .font-pixel { font-family: 'Press Start 2P', monospace; }
+        .font-mono-cyber { font-family: 'Share Tech Mono', monospace; }
+
+        /* カクカクとした直角のドットボーダー */
+        .border-dot-silver {
+            border: 2px solid #CBD5E1;
+            box-shadow: 0 0 0 2px #020617, 0 0 0 4px #CBD5E1;
+        }
+
+        /* 3. 中心から四方に走るドミノ・ピクセルウェーブアニメーション（周期 1.8秒） */
+        @keyframes domino-r {
+            0% { left: 0; width: 0; opacity: 1; }
+            15% { left: 0; width: 32px; opacity: 1; }
+            60% { left: calc(100% - 32px); width: 32px; opacity: 1; }
+            80%, 100% { left: 100%; width: 0; opacity: 0; }
+        }
+        @keyframes domino-l {
+            0% { right: 0; width: 0; opacity: 1; }
+            15% { right: 0; width: 32px; opacity: 1; }
+            60% { right: calc(100% - 32px); width: 32px; opacity: 1; }
+            80%, 100% { right: 100%; width: 0; opacity: 0; }
+        }
+        @keyframes domino-d {
+            0% { top: 0; height: 0; opacity: 1; }
+            15% { top: 0; height: 32px; opacity: 1; }
+            60% { top: calc(100% - 32px); height: 32px; opacity: 1; }
+            80%, 100% { top: 100%; height: 0; opacity: 0; }
+        }
+        @keyframes domino-u {
+            0% { bottom: 0; height: 0; opacity: 1; }
+            15% { bottom: 0; height: 32px; opacity: 1; }
+            60% { bottom: calc(100% - 32px); height: 32px; opacity: 1; }
+            80%, 100% { bottom: 100%; height: 0; opacity: 0; }
+        }
+        @keyframes core-ping-sync {
+            0% { transform: scale(1); opacity: 1; }
+            20% { transform: scale(2.5); opacity: 0; }
+            40%, 100% { transform: scale(1); opacity: 0; }
+        }
+
+        /* 通常時はすべてのウェーブ線およびパルスを完全に非活性（静寂）に制御 */
+        .domino-r-line, .domino-l-line, .domino-d-line, .domino-u-line {
+            display: none;
+        }
+        .core-pulse-line {
+            animation: none;
+            opacity: 0;
+        }
+
+        /* 4つのイラスト（部屋）またはセンターパルス自体のいずれか（.matrix-node）に
+          カーソルがホバーしている瞬間のみ、一斉に1.8秒の完全同期ウェーブが覚醒・実行されます。
+        */
+        .matrix-main-grid:has(.matrix-node:hover) .domino-r-line { display: block; animation: domino-r 1.8s infinite steps(12); }
+        .matrix-main-grid:has(.matrix-node:hover) .domino-l-line { display: block; animation: domino-l 1.8s infinite steps(12); }
+        .matrix-main-grid:has(.matrix-node:hover) .domino-d-line { display: block; animation: domino-d 1.8s infinite steps(12); }
+        .matrix-main-grid:has(.matrix-node:hover) .domino-u-line { display: block; animation: domino-u 1.8s infinite steps(12); }
+        .matrix-main-grid:has(.matrix-node:hover) .core-pulse-line { opacity: 1; animation: core-ping-sync 1.8s infinite ease-out; }
+    </style>
+</head>
+<body class="bg-matrix text-slate-100 min-h-screen font-mono-cyber selection:bg-cyan-500 selection:text-slate-900 overflow-x-hidden relative">
+
+    <header class="w-full max-w-7xl mx-auto px-4 pt-6 relative z-10">
+        <div class="border border-[#CBD5E1]/30 bg-[#020617]/90 backdrop-blur-sm p-4 flex flex-col md:flex-row justify-between items-center gap-4 relative">
+            <div class="absolute -top-1 -left-1 w-2 h-2 bg-[#FFD700]"></div>
+            <div class="absolute -bottom-1 -right-1 w-2 h-2 bg-[#14F195]"></div>
+
+            <div class="flex items-center gap-3">
+                <svg width="25" height="31" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-[0_0_8px_rgba(0,229,255,0.9)]">
+                    <defs>
+                        <linearGradient id="aqaTrueLogGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#0066FF" />
+                            <stop offset="100%" stop-color="#00E5FF" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M0 11h1v5H0z M1 11h1v5H1z M2 10h1v5H2z M3 10h1v5H3z M4 9h1v5H4z M5 9h1v5H5z M6 8h1v5H6z M7 8h1v5H7z M8 8h1v5H8z M9 8h1v5H9z M10 9h1v5H10z M11 9h1v5H11z M12 10h1v5H12z M13 10h1v5H13z M14 11h1v5H14z M15 11h1v5H15z M16 11h1v5H16z M17 12h1v5H17z M18 12h1v5H18z M19 13h1v5H19z M20 13h1v5H20z M21 14h1v5H21z M22 14h1v5H22z M23 14h1v5H23z M24 14h1v5H24z M25 13h1v5H25z M26 13h1v5H26z M27 12h1v5H27z M28 12h1v5H28z M29 11h1v5H29z M30 11h1v5H30z M31 11h1v5H31z M0 20h1v5H0z M1 20h1v5H1z M2 19h1v5H2z M3 19h1v5H3z M4 18h1v5H4z M5 18h1v5H5z M6 17h1v5H6z M7 17h1v5H7z M8 17h1v5H8z M9 17h1v5H9z M10 18h1v5H10z M11 18h1v5H11z M12 19h1v5H12z M13 19h1v5H13z M14 20h1v5H14z M15 20h1v5H15z M16 20h1v5H16z M17 21h1v5H17z M18 21h1v5H18z M19 22h1v5H19z M20 22h1v5H20z M21 23h1v5H21z M22 23h1v5H22z M23 23h1v5H23z M24 23h1v5H24z M25 22h1v5H25z M26 22h1v5H26z M27 21h1v5H27z M28 21h1v5H28z M29 20h1v5H29z M30 20h1v5H30z M31 20h1v5H31z M0 29h1v5H0z M1 29h1v5H1z M2 28h1v5H2z M3 28h1v5H3z M4 27h1v5H4z M5 27h1v5H5z M6 26h1v5H6z M7 26h1v5H7z M8 26h1v5H8z M9 26h1v5H9z M10 27h1v5H10z M11 27h1v5H11z M12 28h1v5H12z M13 28h1v5H13z M14 29h1v5H14z M15 29h1v5H15z M16 29h1v5H16z M17 30h1v5H17z M18 30h1v5H18z M19 31h1v5H19z M20 31h1v5H20z M21 32h1v5H21z M22 32h1v5H22z M23 32h1v5H23z M24 32h1v5H24z M25 31h1v5H25z M26 31h1v5H26z M27 30h1v5H27z M28 30h1v5H28z M29 29h1v5H29z M30 29h1v5H30z M31 29h1v5H31z" fill="url(#aqaTrueLogGrad)"/>
+                </svg>
+                <span class="font-pixel text-lg tracking-wider text-[#00E5FF] transform translate-y-[1px] leading-none">AQA</span>
+            </div>
+
+            <nav class="flex flex-wrap justify-center gap-4 md:gap-6 text-xs uppercase tracking-widest text-slate-400 font-mono-cyber">
+                <a href="#manifesto" class="hover:text-slate-200 transition"><span>[</span> MANIFESTO <span>]</span></a>
+                <a href="#matrix" class="hover:text-[#FFD700] transition"><span>[</span> MATRIX <span>]</span></a>
+                <a href="#" target="_blank" class="text-[#00E5FF] font-bold hover:text-cyan-300 transition"><span>[</span> WHITEPAPER <span>]</span></a>
+            </nav>
+
+            <div class="relative p-[1px] bg-gradient-to-r from-[#9945FF] to-[#14F195]">
+                <button class="bg-[#020617] text-white px-4 py-2 text-xs font-mono-cyber uppercase tracking-wider hover:bg-transparent hover:text-slate-950 font-bold transition duration-150">
+                    VERIFY_IDENTITY
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section id="manifesto" class="max-w-4xl mx-auto px-4 pt-20 pb-10 relative z-10">
+        <div class="border-dot-silver bg-[#020617] p-8 sm:p-16 relative overflow-hidden">
+            
+            <div class="space-y-12 text-center relative z-10 select-all">
+                <div class="space-y-4">
+                    <h2 class="font-pixel text-xl sm:text-2xl lg:text-3xl tracking-tight leading-none text-slate-100">
+                        Cryptoize the World
+                    </h2>
+                    <p class="font-mono-cyber text-base sm:text-lg lg:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                        Maximize Human Potential with Blockchain Technology
+                    </p>
+                </div>
+
+                <div class="w-16 h-[2px] bg-[#CBD5E1]/20 mx-auto"></div>
+
+                <div class="space-y-6">
+                    <p class="font-mono-cyber text-sm sm:text-base lg:text-lg text-[#CBD5E1] tracking-wide max-w-xl mx-auto leading-relaxed">
+                        AQA is building an RWA ecosystem <br class="hidden sm:inline">to crypto-enable everyday life.
+                    </p>
+                    <p class="font-mono-cyber text-sm sm:text-base lg:text-lg text-[#CBD5E1] tracking-wide max-w-xl mx-auto leading-relaxed">
+                        We realize a world where crypto holders can <br class="hidden sm:inline">purchase anything.
+                    </p>
+                </div>
+            </div>
+
+            <div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#CBD5E1]"></div>
+            <div class="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#CBD5E1]"></div>
+            <div class="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#CBD5E1]"></div>
+            <div class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#CBD5E1]"></div>
+        </div>
+
+        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono-cyber">
+            <a href="#" target="_blank" class="border border-[#00E5FF]/40 bg-[#020617]/80 backdrop-blur-sm p-4 text-center hover:border-[#00E5FF] hover:bg-[#00E5FF]/5 transition group relative">
+                <div class="absolute top-0 left-0 w-1 h-1 bg-[#00E5FF]"></div>
+                <span class="text-xs tracking-widest text-[#00E5FF] font-bold group-hover:text-cyan-300">
+                    &gt; ACCESS_SYSTEM_DOCUMENTATION [ WHITEPAPER ]
+                </span>
+            </a>
+            <a href="https://www.gate.io/trade/AQA_USDT" target="_blank" class="border border-[#FFD700]/40 bg-[#020617]/80 backdrop-blur-sm p-4 text-center hover:border-[#FFD700] hover:bg-[#FFD700]/5 transition group relative">
+                <div class="absolute top-0 right-0 w-1 h-1 bg-[#FFD700]"></div>
+                <span class="text-xs tracking-widest text-[#FFD700] font-bold group-hover:text-amber-200">
+                    &gt; VIEW_LIVE_MARKET_DATA [ GATE.IO_CHART ]
+                </span>
+            </a>
+        </div>
+    </section>
+
+    <section id="matrix" class="max-w-7xl mx-auto px-4 pb-16 relative z-10">
+        <div class="matrix-main-grid grid grid-cols-1 md:grid-cols-2 gap-px bg-[#CBD5E1]/20 relative">
+            
+            <div class="matrix-node bg-[#020617] p-8 sm:p-12 flex flex-col justify-between items-start min-h-[320px] relative transition duration-300 hover:bg-[#020617]/40 cursor-pointer">
+                <div class="text-[11px] font-pixel text-[#00E5FF] tracking-widest">[ LIQUIDITY_DIGITAL: COMPUTE_TOKENS ]</div>
+                <div class="my-8">
+                    <svg width="64" height="64" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-[0_0_12px_rgba(0,229,255,0.4)]">
+                        <rect x="5" y="5" width="6" height="6" fill="#00E5FF"/>
+                        <rect x="7" y="7" width="2" height="2" fill="#020617" class="animate-pulse"/>
+                        <path d="M7 2h2v3H7V2z M7 11h2v3H7v-3z M2 7h3v2H2V7z M11 7h3v2h-3V7z M4 4h1v1H4V4z M11 4h1v1h-1V4z M4 11h1v1H4v-1z M11 11h1v1h-1v-1z" fill="#0066FF"/>
+                    </svg>
+                </div>
+                <div class="text-xs text-slate-500 font-mono-cyber">DYNAMIC_RESOURCE // HIGHEST_VELOCITY_COMPUTATIONAL_FUEL</div>
+                <div class="absolute top-0 left-0 w-1.5 h-1.5 bg-[#00E5FF]"></div>
+            </div>
+
+            <div class="matrix-node bg-[#020617] p-8 sm:p-12 flex flex-col justify-between items-start min-h-[320px] relative transition duration-300 hover:bg-[#020617]/40 cursor-pointer">
+                <div class="text-[11px] font-pixel text-[#14F195] tracking-widest">[ SPATIAL_DIGITAL: DECENTRALIZED_CRYPTO ]</div>
+                <div class="my-8">
+                    <svg width="64" height="64" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-[0_0_12px_rgba(20,241,149,0.25)]">
+                        <defs>
+                            <linearGradient id="solGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#9945FF" />
+                                <stop offset="100%" stop-color="#14F195" />
+                            </linearGradient>
+                        </defs>
+                        <rect x="2" y="2" width="3" height="3" fill="url(#solGrad)"/>
+                        <rect x="11" y="2" width="3" height="3" fill="url(#solGrad)"/>
+                        <rect x="2" y="11" width="3" height="3" fill="url(#solGrad)"/>
+                        <rect x="11" y="11" width="3" height="3" fill="url(#solGrad)"/>
+                        <path d="M5 3h6v1H5V3z M5 12h6v1H5v-1z M3 5h1v6H3V5z M12 5h1v6h-1V5z M5 5h6v6H5V5z" fill="url(#solGrad)" opacity="0.4"/>
+                    </svg>
+                </div>
+                <div class="text-xs text-slate-500 font-mono-cyber">CYBER_INFRASTRUCTURE // SOVEREIGN_NETWORK_LEDGER_BASE</div>
+                <div class="absolute top-0 right-0 w-1.5 h-1.5 bg-[#14F195]"></div>
+            </div>
+
+            <div class="matrix-node bg-[#020617] p-8 sm:p-12 flex flex-col justify-between items-start min-h-[320px] relative transition duration-300 hover:bg-[#020617]/40 cursor-pointer">
+                <div class="text-[11px] font-pixel text-[#FFD700] tracking-widest">[ LIQUIDITY_PHYSICAL: METALLIC_RESERVES ]</div>
+                <div class="my-8">
+                    <svg width="64" height="64" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-[0_0_12px_rgba(255,215,0,0.25)]">
+                        <path d="M1 8h4v6H1V8z" fill="#D97706"/>
+                        <path d="M2 7h2v1H2V7z" fill="#FFD700"/>
+                        <path d="M6 6h4v8H6V6z" fill="#475569"/>
+                        <path d="M7 5h2v1H7V5z" fill="#CBD5E1"/>
+                        <path d="M11 9h4v5h-4V9z" fill="#9A3412"/>
+                        <path d="M12 8h2v1h-2V8z" fill="#FB923C"/>
+                    </svg>
+                </div>
+                <div class="text-xs text-slate-500 font-mono-cyber">STATIC_RESOURCE // ZERO_VELOCITY_PHYSICAL_HARD_STORE</div>
+                <div class="absolute bottom-0 left-0 w-1.5 h-1.5 bg-[#FFD700]"></div>
+            </div>
+
+            <div class="matrix-node bg-[#020617] p-8 sm:p-12 flex flex-col justify-between items-start min-h-[320px] relative transition duration-300 hover:bg-[#020617]/40 cursor-pointer">
+                <div class="text-[11px] font-pixel text-[#CBD5E1] tracking-widest">[ SPATIAL_PHYSICAL: REAL_ESTATE_RWA ]</div>
+                <div class="my-8">
+                    <svg width="64" height="64" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-[0_0_12px_rgba(203,213,225,0.1)]">
+                        <rect x="2" y="7" width="3" height="8" fill="#1E293B"/>
+                        <path d="M3 9h1v1H3V9z M3 11h1v1H3v-1z" fill="#475569"/>
+                        <rect x="6" y="2" width="4" height="13" fill="#334155"/>
+                        <path d="M7 4h2v1H7V4z M7 7h2v1H7V7z M7 10h2v1H7v-1z" fill="#94A3B8"/>
+                        <rect x="11" y="5" width="3" height="10" fill="#1E293B"/>
+                        <path d="M12 7h1v1h-1V7z M12 10h1v1h-1v-1z" fill="#475569"/>
+                        <rect x="0" y="14" width="16" height="1" fill="#475569"/>
+                    </svg>
+                </div>
+                <div class="text-xs text-slate-500 font-mono-cyber">PHYSICAL_INFRASTRUCTURE // TANGIBLE_REAL_WORLD_YIELD_PROPERTY</div>
+                <div class="absolute bottom-0 right-0 w-1.5 h-1.5 bg-[#CBD5E1]"></div>
+            </div>
+
+            <div class="absolute inset-0 pointer-events-none hidden md:block z-10">
+                <div class="absolute top-1/2 left-1/2 w-[calc(50%-16px)] h-[3px] transform -translate-y-1/2 overflow-hidden">
+                    <div class="absolute top-0 left-0 h-full bg-[#00E5FF] w-8 shadow-[0_0_10px_#00E5FF] domino-r-line"></div>
+                </div>
+                <div class="absolute top-1/2 right-1/2 w-[calc(50%-16px)] h-[3px] transform -translate-y-1/2 overflow-hidden">
+                    <div class="absolute top-0 right-0 h-full bg-[#00E5FF] w-8 shadow-[0_0_10px_#00E5FF] domino-l-line"></div>
+                </div>
+                <div class="absolute left-1/2 top-1/2 w-[3px] h-[calc(50%-16px)] transform -translate-x-1/2 overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full bg-[#00E5FF] h-8 shadow-[0_0_10px_#00E5FF] domino-d-line"></div>
+                </div>
+                <div class="absolute left-1/2 bottom-1/2 w-[3px] h-[calc(50%-16px)] transform -translate-x-1/2 overflow-hidden">
+                    <div class="absolute bottom-0 left-0 w-full bg-[#00E5FF] h-8 shadow-[0_0_10px_#00E5FF] domino-u-line"></div>
+                </div>
+            </div>
+
+            <div class="matrix-node absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#020617] border border-[#CBD5E1]/40 p-2 z-20 hidden md:block cursor-crosshair transition hover:scale-110">
+                <div class="w-3 h-3 bg-[#00E5FF] core-pulse-line rounded-none"></div>
+            </div>
+            </div>
+
+        <div class="mt-8 text-center border-t border-[#CBD5E1]/10 pt-6">
+            <p class="font-mono-cyber text-xs tracking-widest text-[#CBD5E1]/60 uppercase">
+                [ SYSTEM_NOTE: ALL ASSETS ARE CRYPTO-ENABLED AND INTERCHANGEABLE VIA THE AQA MAINFRAME. ]
+            </p>
+        </div>
+    </section>
+
+    <section class="max-w-4xl mx-auto px-4 pb-20 relative z-10 text-center">
+        <div class="text-[10px] font-pixel text-slate-500 tracking-widest mb-4">
+            [ COMMUNICATION_NODES: EXTERNAL_PLATFORMS ]
+        </div>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-4 border border-[#CBD5E1]/20 bg-[#020617]/60 font-mono-cyber text-xs tracking-widest uppercase">
+            <a href="https://x.com/" target="_blank" class="p-4 border-r border-b sm:border-b-0 border-[#CBD5E1]/20 hover:bg-[#00E5FF]/5 hover:text-[#00E5FF] transition">
+                X_TWITTER
+            </a>
+            <a href="https://t.me/" target="_blank" class="p-4 border-b sm:border-b-0 sm:border-r border-[#CBD5E1]/20 hover:bg-[#00E5FF]/5 hover:text-[#00E5FF] transition">
+                TELEGRAM
+            </a>
+            <a href="https://medium.com/" target="_blank" class="p-4 border-r border-[#CBD5E1]/20 hover:bg-[#FFD700]/5 hover:text-[#FFD700] transition">
+                MEDIUM_LOG
+            </a>
+            <a href="https://coinmarketcap.com/currencies/aqa/" target="_blank" class="p-4 hover:bg-[#14F195]/5 hover:text-[#14F195] transition">
+                COINMARKETCAP
+            </a>
+        </div>
+    </section>
+
+    <footer class="w-full border-t border-[#CBD5E1]/10 bg-[#020617] py-6 text-center text-[11px] font-mono-cyber text-slate-600 tracking-widest relative z-10">
+        M2M_MATRIX_ONLINE // CORE_RESERVE_ACTIVE // © 2026 AQA FOUNDATION
+    </footer>
+
+</body>
+</html>
